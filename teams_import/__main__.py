@@ -12,7 +12,7 @@ try:
 except ImportError:
     import importlib_resources as pkg_resources
 
-from . import templates
+import teams_import.templates as templates
 
 def invite():
     if os.path.isfile("./import.ps1"):
