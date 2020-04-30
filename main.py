@@ -19,7 +19,7 @@ def getUnitcodeFromDisplayName(displayName):
         return None
 
 
-def generageImport(csvsDir, dict):
+def generageImport(csvsDir, dict, email):
     not_found = []
     found = []
     f = open("import.ps1", "w+")
@@ -28,7 +28,10 @@ def generageImport(csvsDir, dict):
         if os.path.isfile(file_path):
             found.append(f"Preparing import for {file_path}")
             f.write(
-                f"Import-Csv -Path {file_path} | foreach {{Add-TeamUser -GroupId {value} -user $_.email}}\n")
+                "Import-Module MicrosoftTeams\n"
+                "Connect-MicrosoftTeams\n"
+                f"Get-Team -User {email} | Select-Object GroupID, DisplayName | Export-CSV -path ./teams.csv -NoTypeInformation\n"
+                f"Import-Csv -Path {file_path} | ForEach-Object {{Add-TeamUser -GroupId {value} -user $_.email}}\n")
         else:
             not_found.append(f"No CSV file found at {file_path}")
 
@@ -36,7 +39,7 @@ def generageImport(csvsDir, dict):
     print("\n".join(not_found))
 
 
-def process(csvsDir):
+def process(csvsDir, email):
     dict = {}
     with open('teams.csv', mode='r') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -44,7 +47,7 @@ def process(csvsDir):
             unitCode = getUnitcodeFromDisplayName((row['DisplayName']))
             if unitCode:
                 dict[unitCode] = row['GroupId']
-    generageImport(csvsDir, dict)
+    generageImport(csvsDir, dict, email)
 
 
 def init(email):
@@ -61,5 +64,5 @@ def init(email):
 def cli(csvsdir, email):
     """The CLI tool for importing Deakin students into Microsoft teams"""
     init(email)
-    process(csvsdir)
+    process(csvsdir, email)
     invite()

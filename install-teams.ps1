@@ -2,8 +2,8 @@ param(
 [string]$email
 )
 
-if (!(Test-Path -Path ./powershell/importerProfile)) {
-  New-Item -ItemType File -Path ./powershell/importerProfile -Force
+if (!(Test-Path $Profile)) {
+  New-Item -Type file -Path $Profile -Force
 }
 
 if (Get-Module -ListAvailable -Name MicrosoftTeams) {
@@ -11,9 +11,5 @@ if (Get-Module -ListAvailable -Name MicrosoftTeams) {
 }
 else {
   Write-Host "Installing Microsoft Teams"
-  Install-Module MicrosoftTeams -Force
+  Install-Module MicrosoftTeams –Repository PSGallery -Force
 }
-
-Import-Module MicrosoftTeams
-Connect-MicrosoftTeams
-Get-Team -User $email | Select-Object GroupID, DisplayName | Export-CSV -path ./teams.csv -NoTypeInformation
