@@ -1,1 +1,1 @@
-include install-teams.ps1
+include teams_import/templates/*

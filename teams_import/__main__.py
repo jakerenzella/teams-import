@@ -6,12 +6,20 @@ import os
 import teams_import
 from teams_import import shell
 
+try:
+    import importlib.resources as pkg_resources
+
+except ImportError:
+    import importlib_resources as pkg_resources
+
+from . import templates
 
 def invite():
     if os.path.isfile("./import.ps1"):
         shell.exec_powershell_script("./import.ps1")
     else:
         print("Can't find import powershell file")
+
 
 def getUnitcodeFromDisplayName(displayName):
     m = re.search('SIT[0-9]{3}', displayName)
@@ -58,7 +66,9 @@ def init(email):
     if not result:
         exit(2)
     else:
-        shell.exec_powershell_script("install-teams.ps1", email)
+        # install_teams_file
+        with pkg_resources.path(templates, 'install-teams.ps1') as file:
+            shell.exec_powershell_script(file, email)
 
 
 @click.command()
@@ -69,6 +79,3 @@ def cli(csvsdir, email):
     init(email)
     process(csvsdir, email)
     invite()
-
-if __name__ == "__main__":
-    cli()
