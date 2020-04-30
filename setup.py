@@ -15,12 +15,13 @@ setup(
     author_email="jake.renzella@deakin.edu.au",
     license="MIT",
     name='teams-import',
-    version='1.0.4',
+    version='1.0.6',
     py_modules=['main'],
     packages=['teams_import'],
     install_requires=[
         'click',
     ],
+    include_package_data=True,
     entry_points={
         "console_scripts": [
             "teams-import=teams_import.__main__:cli",
