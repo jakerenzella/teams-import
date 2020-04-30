@@ -1,8 +1,11 @@
 import click
-import shell
 import csv
 import re
 import os
+
+import teams_import
+from teams_import import shell
+
 
 def invite():
     if os.path.isfile("./import.ps1"):
@@ -55,7 +58,7 @@ def init(email):
     if not result:
         exit(2)
     else:
-        shell.exec_powershell_script("./install-teams.ps1", email)
+        shell.exec_powershell_script("install-teams.ps1", email)
 
 
 @click.command()
@@ -66,3 +69,6 @@ def cli(csvsdir, email):
     init(email)
     process(csvsdir, email)
     invite()
+
+if __name__ == "__main__":
+    cli()
