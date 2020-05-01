@@ -2,6 +2,7 @@ import click
 import csv
 import re
 import os
+import tempfile
 
 import teams_import
 from teams_import import shell
@@ -12,7 +13,8 @@ try:
 except ImportError:
     import importlib_resources as pkg_resources
 
-import teams_import.templates as templates
+temp = tempfile.NamedTemporaryFile(mode="w+", suffix='.csv')
+print(temp.name)
 
 def invite():
     if os.path.isfile("./import.ps1"):
@@ -30,7 +32,8 @@ def getUnitcodeFromDisplayName(displayName):
         return None
 
 
-def generageImport(csvsDir, dict, email):
+def generateImport(csvsDir, dict, email):
+
     not_found = []
     found = []
     f = open("import.ps1", "w+")
@@ -38,10 +41,13 @@ def generageImport(csvsDir, dict, email):
         file_path = f"{csvsDir}/{key}.csv"
         if os.path.isfile(file_path):
             found.append(f"Preparing import for {file_path}")
+            print(
+                "Import-Module MicrosoftTeams\n"
+                f"Connect-MicrosoftTeams\n"
+                f"Import-Csv -Path {file_path} | ForEach-Object {{Add-TeamUser -GroupId {value} -user $_.email}}\n")
             f.write(
                 "Import-Module MicrosoftTeams\n"
-                "Connect-MicrosoftTeams\n"
-                f"Get-Team -User {email} | Select-Object GroupID, DisplayName | Export-CSV -path ./teams.csv -NoTypeInformation\n"
+                f"Connect-MicrosoftTeams\n"
                 f"Import-Csv -Path {file_path} | ForEach-Object {{Add-TeamUser -GroupId {value} -user $_.email}}\n")
         else:
             not_found.append(f"No CSV file found at {file_path}")
@@ -52,13 +58,13 @@ def generageImport(csvsDir, dict, email):
 
 def process(csvsDir, email):
     dict = {}
-    with open('teams.csv', mode='r') as csvfile:
+    with open(temp.name, mode='r') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             unitCode = getUnitcodeFromDisplayName((row['DisplayName']))
             if unitCode:
                 dict[unitCode] = row['GroupId']
-    generageImport(csvsDir, dict, email)
+    generateImport(csvsDir, dict, email)
 
 
 def init(email):
@@ -66,9 +72,8 @@ def init(email):
     if not result:
         exit(2)
     else:
-        # install_teams_file
-        with pkg_resources.path(templates, 'install-teams.ps1') as file:
-            shell.exec_powershell_script(file, email)
+        with pkg_resources.path('teams_import.templates', 'install-teams.ps1') as file:
+            shell.exec_powershell_script(file, email, temp.name)
 
 
 @click.command()
