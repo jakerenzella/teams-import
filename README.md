@@ -26,8 +26,10 @@ example:
 
 2. Follow the command line instructions and authenticate the teams Powershell environment. You will see a line like the following:
 
-> WARNING: To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code GUXEKTDPP to authenticate.`
+> WARNING: To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code XXXXXXXX to authenticate.`
 
 Open the link, log in, and authenticate with the code.
+
+> Note, currently you will have to authenticate two seperate times. One to generate the list of teams to import, and another to actually perform the import.
 
 3. Once authenticated, the command line will try and import the students. Note: for large units, the import may take several minutes.

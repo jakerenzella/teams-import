@@ -15,7 +15,7 @@ setup(
     author_email="jake.renzella@deakin.edu.au",
     license="MIT",
     name='teams-import',
-    version='1.0.8dev2',
+    version='1.0.8b2',
     py_modules=['main'],
     packages=['teams_import'],
     install_requires=[
