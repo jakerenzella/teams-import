@@ -8,14 +8,14 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    description="A command line tool for bulk importing students to MicrosoftTeams",
+    description="A secure command line tool for bulk importing Deakin students to MicrosoftTeams",
     long_description=README,
     long_description_content_type="text/markdown",
     author="Jake Renzella",
     author_email="jake.renzella@deakin.edu.au",
     license="MIT",
     name='teams-import',
-    version='1.0.8b2',
+    version='1.0.8b3',
     py_modules=['main'],
     packages=['teams_import'],
     install_requires=[
